@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NetworkHandler.cpp">
+    <ClCompile Include="SimpleClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ServerMain.cpp">
+    <ClCompile Include="..\GameServer\NetworkHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NetworkHandler.h">
+    <ClInclude Include="..\GameServer\NetworkHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
