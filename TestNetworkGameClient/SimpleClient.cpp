@@ -12,7 +12,7 @@ int main()
 
 	SOCKADDR_IN server_address;
 	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(PORT);
+	server_address.sin_port = htons(9999);
 	inet_pton(AF_INET,"127.0.0.1", &server_address.sin_addr);
 
 	char message[SOCKET_BUFFER_SIZE];

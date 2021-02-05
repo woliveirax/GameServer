@@ -140,11 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="NetworkHandler.cpp" />
+    <ClCompile Include="ServerSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameLogic.h" />
+    <ClInclude Include="MessageStructures.h" />
     <ClInclude Include="NetworkHandler.h" />
+    <ClInclude Include="ServerInformation.h" />
+    <ClInclude Include="ServerSettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

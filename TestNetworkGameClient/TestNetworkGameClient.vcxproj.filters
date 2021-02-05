@@ -26,5 +26,8 @@
     <ClInclude Include="..\GameServer\NetworkHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GameServer\MessageStructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

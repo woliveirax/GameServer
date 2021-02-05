@@ -1,4 +1,3 @@
-#pragma once
 #include "NetworkHandler.h"
 
 SOCKET GetSocket(int shouldbind, int bindport)
@@ -22,6 +21,7 @@ SOCKET GetSocket(int shouldbind, int bindport)
 	if (sock == INVALID_SOCKET)
 	{
 		printf("Socket creation failed: %d", WSAGetLastError());
+		WSACleanup();
 		return INVALID_SOCKET;
 	}
 
@@ -36,6 +36,7 @@ SOCKET GetSocket(int shouldbind, int bindport)
 		if (bind(sock, (SOCKADDR*)&local_address, sizeof(local_address)) == SOCKET_ERROR)
 		{
 			printf("Bind failed: %d", WSAGetLastError());
+			WSACleanup();
 			return INVALID_SOCKET;
 		}
 	}
