@@ -13,6 +13,8 @@ public:
 	static unsigned char MAX_PLAYERS;
 	static unsigned char TICK_RATE;
 	static unsigned short PORT;
+
+	static float SECONDS_PER_TICK;
 };
 
 const unsigned int SOCKET_BUFFER_SIZE = 1024;
