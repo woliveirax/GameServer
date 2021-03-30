@@ -3,4 +3,4 @@
 #include <stdio.h>
 #include "ServerSettings.h"
 
-SOCKET GetSocket(int shouldbind = 1, int bindport = 9999);
+SOCKET GetSocket(bool shouldbind = true, int bindport = 9999);

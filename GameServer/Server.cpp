@@ -1,77 +1,20 @@
 #pragma once
-#include "ServerLogic.h"
+#include "Server.h"
+
+bool Server::run = false;
 
 //Wait for threads to finish, release memory and resources.
-void ShutdownServer(SharedInfo* info)
+void Shutdown()
 {
-	info->is_running = 0;
+	info-> = false;
 	//TODO: wait for threads if there's any
 
 	//TODO: Release and close thread handles
 
 	//TODO: Release and close sync resources
-
-	//Free client related data structures
-	free(info->player_state);
-	free(info->player_input);
-	free(info->last_response);
-	free(info->client_address);
-
-	//Free socket resources
-	closesocket(info->sock);
-	WSACleanup();
 }
 
-//Init server and allocate memory
-int InitServer(SharedInfo* info)
-{
-	*info = {};
-
-	info->sock = GetSocket(1, ServerSettings::PORT);
-	if (info->sock == INVALID_SOCKET)
-	{
-		printf("failed to start socket: %d", WSAGetLastError());
-		WSACleanup();
-		return -1;
-	}
-
-	info->client_address = (IP*)malloc(sizeof(IP) * ServerSettings::MAX_PLAYERS);
-	if (info->client_address == NULL)
-	{
-		printf("failed to allocate space for clients addresses\n");
-		ShutdownServer(info);
-		return -1;
-	}
-
-	info->last_response = (float*)malloc(sizeof(float) * ServerSettings::MAX_PLAYERS);
-	if (info->last_response == NULL)
-	{
-		printf("failed to allocate space for client last reponse time\n");
-		ShutdownServer(info);
-		return -1;
-	}
-
-	info->player_input = (PlayerInput*)malloc(sizeof(PlayerInput) * ServerSettings::MAX_PLAYERS);
-	if (info->player_input == NULL)
-	{
-		printf("failed to allocate space for player input data\n");
-		ShutdownServer(info);
-		return -1;
-	}
-
-	info->player_state = (PlayerState*)malloc(sizeof(PlayerState) * ServerSettings::MAX_PLAYERS);
-	if (info->player_state == NULL)
-	{
-		printf("failed to allocate space for player state data.\n");
-		ShutdownServer(info);
-		return -1;
-	}
-	info->is_running = 1;
-
-	return 0;
-}
-
-//Calculate time since last tick
+//used to calculate time since last tick
 float time_since(const LARGE_INTEGER& t, const LARGE_INTEGER& frequency)
 {
 	LARGE_INTEGER now;
@@ -80,6 +23,7 @@ float time_since(const LARGE_INTEGER& t, const LARGE_INTEGER& frequency)
 	return float(now.QuadPart - t.QuadPart) / float(frequency.QuadPart);
 }
 
+//Function to sync tickrate
 void waitForTick(const bool& sleep_granularity_was_set, const LARGE_INTEGER& tick_start, const LARGE_INTEGER& frequency)
 {
 	float time_taken_s = time_since(tick_start, frequency);
@@ -121,7 +65,7 @@ void HandleClientInput(const char& client_input, SharedInfo* const info)
 		break;
 
 	case 'q':
-		info->is_running = 0;
+		info->run = 0;
 		break;
 
 	default:
@@ -129,9 +73,9 @@ void HandleClientInput(const char& client_input, SharedInfo* const info)
 	}
 }
 
-void CommunicationHandler(void* info_ptr)
+LPVOID CommunicationHandler(LPVOID client_manager)
 {
-	SharedInfo* info = (SharedInfo*)info_ptr;
+	ClientManager* clients = (ClientManager*)client_manager;
 	char buffer[SOCKET_BUFFER_SIZE];
 
 	//TODO: Init timer here
@@ -141,7 +85,7 @@ void CommunicationHandler(void* info_ptr)
 	LARGE_INTEGER clock_frequency;
 	QueryPerformanceFrequency(&clock_frequency);
 
-	while (info->is_running)
+	while (Server::run)
 	{
 		//Obtain start time of tick, to synchronize tick rate at the end of the cycle
 		LARGE_INTEGER tick_start_time;
@@ -159,19 +103,17 @@ void CommunicationHandler(void* info_ptr)
 			break;
 		}
 
-		//TODO: Change this later
-		if (bytes_received > SOCKET_BUFFER_SIZE)
-			buffer[bytes_received] = '\0';
-		else
-			buffer[SOCKET_BUFFER_SIZE - 1] = '\0';
-
 		printf("%d.%d.%d.%d:%d - %d\n", from.sin_addr.S_un.S_un_b.s_b1, from.sin_addr.S_un.S_un_b.s_b2,
 			from.sin_addr.S_un.S_un_b.s_b3, from.sin_addr.S_un.S_un_b.s_b4, ntohs(from.sin_port), buffer[0]);
 
 		char client_input = buffer[0];
+
+		//TODO: HandlePacket
 		HandleClientInput(client_input, info);
 
-		//Prepare client reply
+
+		//TODO: Move reply to handle package code
+		//Client Reply
 		int write_index = 0;	//Also used as the buffer length
 
 		memcpy(&buffer[write_index], &info->player_state[0].x, sizeof(info->player_state[0].x));
@@ -180,8 +122,8 @@ void CommunicationHandler(void* info_ptr)
 		memcpy(&buffer[write_index], &info->player_state[0].y, sizeof(info->player_state[0].y));
 		write_index += sizeof(info->player_state[0].y);
 
-		memcpy(&buffer[write_index], &info->is_running, sizeof(info->is_running));
-		write_index += sizeof(info->is_running);
+		memcpy(&buffer[write_index], &info->run, sizeof(info->run));
+		write_index += sizeof(info->run);
 
 		//Reply to client
 		flags = 0;

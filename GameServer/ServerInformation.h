@@ -1,16 +1,34 @@
 #pragma once
-struct IP
+class Client
 {
+public:
 	unsigned int address;
 	unsigned short port;
+	float last_response;
+
+	Client() : address(0), port(0), last_response(0) {};
+
+	void updateLastResponse();
 };
 
-struct PlayerState
+class GameClient : Client
 {
-	float x, y, facing, speed;
-};
+public:
+	char username[MAX_USERNAME_SIZE];
 
-struct PlayerInput
-{
-	int up, down, left, right;
+	//Player status
+	float x;
+	float y;
+	float facing;
+	float speed;
+
+	//Action
+	bool up, down, left, right;
+
+	GameClient()
+		: username()
+	{
+		x = y = facing = speed = 0;
+		up = down = left = right = false;
+	}
 };

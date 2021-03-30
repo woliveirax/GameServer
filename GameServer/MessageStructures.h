@@ -15,3 +15,12 @@ enum class Server_Message : unsigned char
 	JoinResult,
 	State
 };
+
+enum class Action : unsigned char
+{
+	Forward,
+	Backward,
+	Left,
+	Right,
+	fire
+};

@@ -18,3 +18,4 @@ public:
 };
 
 const unsigned int SOCKET_BUFFER_SIZE = 1024;
+const unsigned int MAX_USERNAME_SIZE = 64;

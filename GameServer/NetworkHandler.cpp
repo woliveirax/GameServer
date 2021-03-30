@@ -1,6 +1,6 @@
 #include "NetworkHandler.h"
 
-SOCKET GetSocket(int shouldbind, int bindport)
+SOCKET GetSocket(bool shouldbind, int bindport)
 {
 	//Socket protocol initialization
 	WORD winsock_ver = 0x202;

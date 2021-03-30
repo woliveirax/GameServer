@@ -141,7 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameLogic.cpp" />
-    <ClCompile Include="ServerLogic.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="ServerMain.cpp" />
     <ClCompile Include="NetworkHandler.cpp" />
     <ClCompile Include="ServerSettings.cpp" />
@@ -151,7 +151,7 @@
     <ClInclude Include="MessageStructures.h" />
     <ClInclude Include="NetworkHandler.h" />
     <ClInclude Include="ServerInformation.h" />
-    <ClInclude Include="ServerLogic.h" />
+    <ClInclude Include="Server.h" />
     <ClInclude Include="ServerSettings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

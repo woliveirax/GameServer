@@ -27,7 +27,7 @@
     <ClCompile Include="ServerSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ServerLogic.cpp">
+    <ClCompile Include="Server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClInclude Include="ServerInformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ServerLogic.h">
+    <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
