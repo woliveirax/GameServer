@@ -1,8 +1,6 @@
 #pragma once
 #include "Server.h"
 
-bool Server::run = false;
-
 //Wait for threads to finish, release memory and resources.
 void Shutdown()
 {
@@ -73,19 +71,18 @@ void HandleClientInput(const char& client_input, SharedInfo* const info)
 	}
 }
 
-LPVOID CommunicationHandler(LPVOID client_manager)
+void ThreadManager::CommunicationHandler()
 {
-	ClientManager* clients = (ClientManager*)client_manager;
+	Server& server = Server::getInstance();
 	char buffer[SOCKET_BUFFER_SIZE];
 
-	//TODO: Init timer here
 	UINT sleep_glanularity_ms = 1;
 	bool sleep_glanularity_set = timeBeginPeriod(sleep_glanularity_ms) == TIMERR_NOERROR;
 
 	LARGE_INTEGER clock_frequency;
 	QueryPerformanceFrequency(&clock_frequency);
 
-	while (Server::run)
+	while (server.run)
 	{
 		//Obtain start time of tick, to synchronize tick rate at the end of the cycle
 		LARGE_INTEGER tick_start_time;

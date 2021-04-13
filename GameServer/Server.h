@@ -15,41 +15,22 @@ public:
 	std::mutex consoleWriteMutex;
 };
 
-class ThreadManager {
-private:
-	enum class ThreadIdentity : unsigned int
-	{
-		mainCommunicationThread = 0,
-		keepAliveThread
-	};
 
-	HANDLE mainCommunicationThread;
-	HANDLE keepAliveThread;
-	HANDLE consoleThread;
+#include <thread>
+class ThreadManager {
+
+private:
+	std::thread mainCommunicationThread;
+	std::thread keepAliveThread;
+
+	void CommunicationHandler();
 
 	void startMainCommsThread()
 	{
-		mainCommunicationThread = CreateThread(
-			NULL,                   // default security attributes
-			0,                      // use default stack size  
-			,       // thread function name
-			NULL,          // argument to thread function 
-			0,                      // use default creation flags 
-			NULL);   // returns the thread identifier 
-
-		if (mainCommunicationThread == NULL)
-		{
-			throw ("Failed to start communication thread\n");
-		}
+		mainCommunicationThread = std::thread(&CommunicationHandler);
 	}
 
 public:
-	ThreadManager()
-	{
-		mainCommunicationThread = nullptr;
-		keepAliveThread = nullptr;
-	};
-
 	void startThreads()
 	{
 		startMainCommsThread();
@@ -57,17 +38,8 @@ public:
 
 	void waitForThreads()
 	{
-		HANDLE threads[2];
-		threads[0] = mainCommunicationThread;
-		threads[1] = keepAliveThread;
-
-		WaitForMultipleObjects(2, threads, true, INFINITE);
-	};
-
-	~ThreadManager()
-	{
-		CloseHandle(mainCommunicationThread);
-		CloseHandle(keepAliveThread);
+		mainCommunicationThread.join();
+		keepAliveThread.join();
 	};
 };
 
@@ -80,7 +52,7 @@ public:
 		clients = std::unique_ptr<GameClient[]>(new GameClient[ServerSettings::MAX_PLAYERS]);
 	}
 
-	unsigned int AddClient(const int ip, const unsigned short port);
+	unsigned int AddClient(const unsigned int ip, const unsigned short port);
 	Client& GetClient(const int id);
 	void RemoveClient(const int id);
 };
@@ -101,15 +73,15 @@ public:
 		}
 	}
 
+	void sendDataSingleClient(const char* &buffer);
+	void broadcastData(const char* &buffer);
+	void recvData(char* &buffer, unsigned int &bytes_received);
+
 	~CommunicationManager()
 	{
 		closesocket(sock);
 		WSACleanup();
 	}
-
-	static void sendDataSingleClient(const char* &buffer);
-	static void broadcastData(const char* &buffer);
-	static void recvData(char* &buffer, unsigned int &bytes_received);
 };
 
 class Server
@@ -141,5 +113,3 @@ public:
 	Server& operator=(const Server&& other) = delete;
 	Server& operator=(const Server& other) = delete;
 };
-
-LPVOID CommunicationHandler(LPVOID client_manager);
